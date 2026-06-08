@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080E1C">
+<title>ShiftScope</title>
+<link rel="stylesheet" href="shiftscope-styles.css">
+</head>
+<body>
+<div class="app">
+
+<div id="onboarding" style="display:block;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--ink);">
+  <div class="onboard-wrap">
+
+    <!-- Step 1: Welcome -->
+    <div class="onboard-step active" id="ob-step-1">
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--sky);letter-spacing:0.14em;margin-bottom:16px;">SHIFTSCOPE</div>
+      <div class="onboard-hero">Some shifts pay well.<br><em>Some just feel like they do.</em></div>
+      <div class="onboard-sub">ShiftScope tells you which is which — before you answer.</div>
+      <div class="progress-dots">
+        <div class="dot active" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+      </div>
+      <button class="btn" onclick="obNext(2)">Check a shift now</button>
+      <div style="margin-top:12px;text-align:center;">
+        <span style="font-size:0.75rem;color:var(--dim);">No account needed &nbsp;·&nbsp; Everything stays on your device</span>
+      </div>
+    </div>
+
+    <!-- Step 2: Profession + Rate -->
+    <div class="onboard-step" id="ob-step-2">
+      <div class="onboard-hero">What's your <em>work?</em></div>
+      <div class="onboard-sub">Your profession shapes the fatigue read. Your rate sets the pay calc.</div>
+      <div class="progress-dots">
+        <div class="dot done"></div>
+        <div class="dot active"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="prof-grid" id="ob-prof-grid">
+        <div class="prof-card active" data-p="1.00" onclick="selectProf(this)"><div class="prof-icon">🚌</div><div class="prof-name">Bus Driver</div></div>
+        <div class="prof-card" data-p="1.10" onclick="selectProf(this)"><div class="prof-icon">👶</div><div class="prof-name">Care Worker</div></div>
+        <div class="prof-card" data-p="1.10" onclick="selectProf(this)"><div class="prof-icon">👨‍🍳</div><div class="prof-name">Chef / Kitchen</div></div>
+        <div class="prof-card" data-p="1.15" onclick="selectProf(this)"><div class="prof-icon">🏗️</div><div class="prof-name">Construction</div></div>
+        <div class="prof-card" data-p="0.95" onclick="selectProf(this)"><div class="prof-icon">📮</div><div class="prof-name">Delivery / Post</div></div>
+        <div class="prof-card" data-p="1.15" onclick="selectProf(this)"><div class="prof-icon">🏭</div><div class="prof-name">Factory / Mfg</div></div>
+        <div class="prof-card" data-p="1.18" onclick="selectProf(this)"><div class="prof-icon">🌾</div><div class="prof-name">Farm / Outdoor</div></div>
+        <div class="prof-card" data-p="1.28" onclick="selectProf(this)"><div class="prof-icon">🚒</div><div class="prof-name">Firefighter</div></div>
+        <div class="prof-card" data-p="1.00" onclick="selectProf(this)"><div class="prof-icon">🚛</div><div class="prof-name">HGV Driver</div></div>
+        <div class="prof-card" data-p="1.12" onclick="selectProf(this)"><div class="prof-icon">👩‍⚕️</div><div class="prof-name">Midwife</div></div>
+        <div class="prof-card" data-p="1.12" onclick="selectProf(this)"><div class="prof-icon">🏥</div><div class="prof-name">Nurse / Health</div></div>
+        <div class="prof-card" data-p="0.80" onclick="selectProf(this)"><div class="prof-icon">💻</div><div class="prof-name">Office / Admin</div></div>
+        <div class="prof-card" data-p="1.05" onclick="selectProf(this)"><div class="prof-icon">⚙️</div><div class="prof-name">Other</div></div>
+        <div class="prof-card" data-p="1.25" onclick="selectProf(this)"><div class="prof-icon">🚑</div><div class="prof-name">Paramedic</div></div>
+        <div class="prof-card" data-p="1.20" onclick="selectProf(this)"><div class="prof-icon">👮</div><div class="prof-name">Police / PCSO</div></div>
+        <div class="prof-card" data-p="1.20" onclick="selectProf(this)"><div class="prof-icon">🔐</div><div class="prof-name">Prison Officer</div></div>
+        <div class="prof-card" data-p="0.92" onclick="selectProf(this)"><div class="prof-icon">🛒</div><div class="prof-name">Retail / Hosp.</div></div>
+        <div class="prof-card" data-p="1.08" onclick="selectProf(this)"><div class="prof-icon">🔒</div><div class="prof-name">Security</div></div>
+        <div class="prof-card" data-p="0.85" onclick="selectProf(this)"><div class="prof-icon">📚</div><div class="prof-name">Teacher</div></div>
+        <div class="prof-card" data-p="1.00" onclick="selectProf(this)"><div class="prof-icon">🚂</div><div class="prof-name">Train Driver</div></div>
+        <div class="prof-card" data-p="1.06" onclick="selectProf(this)"><div class="prof-icon">📦</div><div class="prof-name">Warehouse</div></div>
+      </div>
+      <div class="rate-input-wrap">
+        <span class="rate-prefix">£</span>
+        <input class="rate-input" type="number" id="ob-rate" min="0.01" step="0.50" value="20.50" oninput="checkNMW(this.value,'ob-nmw')">
+      </div>
+      <div class="nmw-warn" id="ob-nmw">⚠ Below National Minimum Wage (£11.44/hr)</div>
+      <div class="rate-hint">Your contracted hourly rate. Overtime handled automatically.</div>
+      <div style="height:14px;"></div>
+      <button class="btn" onclick="obNext(3)">Next →</button>
+      <div style="margin-top:8px;"><button class="btn ghost sm" onclick="obNext(3)">Skip for now</button></div>
+    </div>
+
+    <!-- Step 3: Contracted hours + OT rate -->
+    <div class="onboard-step" id="ob-step-3">
+      <div class="onboard-hero">One more thing — <em>your shift.</em></div>
+      <div class="onboard-sub">Standard hours and overtime rate. Change these any time in Settings.</div>
+      <div class="progress-dots"><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div></div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.7rem;font-weight:800;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px;">CONTRACTED HOURS PER SHIFT</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">Your normal shift length — overtime starts after this</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:20px;">
+          <button onclick="stepOb('ob-contracted',-0.25,1,16)" style="width:48px;height:48px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--white);font-size:1.4rem;cursor:pointer;">−</button>
+          <div id="ob-contracted-val" style="font-size:1.6rem;font-weight:800;color:var(--white);min-width:110px;text-align:center;">9h 15m</div>
+          <input type="hidden" id="ob-contracted" value="9.25">
+          <button onclick="stepOb('ob-contracted',0.25,1,16)" style="width:48px;height:48px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--white);font-size:1.4rem;cursor:pointer;">+</button>
+        </div>
+      </div>
+      <div style="margin-bottom:24px;">
+        <div style="font-size:0.7rem;font-weight:800;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px;">OVERTIME RATE</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">What does your employer pay for overtime hours?</div>
+        <div class="seg" id="ob-ot-seg">
+          <button class="seg-btn" onclick="setSeg('ob-ot-seg',this);document.getElementById('ob-ot-mult').value='1.25'">1.25x</button>
+          <button class="seg-btn active" onclick="setSeg('ob-ot-seg',this);document.getElementById('ob-ot-mult').value='1.5'">1.5x</button>
+          <button class="seg-btn" onclick="setSeg('ob-ot-seg',this);document.getElementById('ob-ot-mult').value='1.75'">1.75x</button>
+          <button class="seg-btn" onclick="setSeg('ob-ot-seg',this);document.getElementById('ob-ot-mult').value='2.0'">2x</button>
+        </div>
+        <input type="hidden" id="ob-ot-mult" value="1.5">
+      </div>
+      <button class="btn" onclick="finishOnboarding()">Get the read</button>
+      <div style="font-size:0.7rem;color:var(--muted);text-align:center;margin-top:10px;">Takes under a minute. No account needed.</div>
+    </div>
+
+  </div>
+</div>
+
+<div id="main-app" style="display:none;">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">Shift<em>Scope</em></div>
+    <div class="topbar-right">
+      <div id="recovery-state-pill" onclick="showTab('today')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);cursor:pointer;">
+        <span id="rs-pill-dot" style="width:7px;height:7px;border-radius:50%;background:#4ADE80;flex-shrink:0;"></span>
+        <span id="rs-pill-label" style="font-size:0.72rem;font-weight:700;color:#4ADE80;white-space:nowrap;">Fresh</span>
+        <span id="rs-pill-arrow" style="font-size:0.7rem;color:var(--muted);">→</span>
+      </div>
+      <button class="icon-btn" onclick="showTab('settings')" title="Settings">⚙</button>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div id="screen-wrap">
+
+  <div id="tab-today" class="screen active">
+
+    <!-- Date + time-of-day -->
+    <div style="padding-top:6px;margin-bottom:18px;">
+      <div id="today-headline" style="font-size:clamp(1.4rem,5vw,1.8rem);font-weight:900;letter-spacing:-0.03em;color:var(--white);line-height:1.1;"></div>
+      <div id="today-sub" style="font-size:0.82rem;color:var(--muted);margin-top:4px;line-height:1.5;"></div>
+    </div>
+
+    <!-- Recovery State card -->
+    <div id="today-recovery-card" style="border-radius:16px;padding:18px 20px;margin-bottom:14px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.25);">
+      <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.8px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;">Recovery state</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div id="today-state-label" style="font-size:clamp(1.6rem,6vw,2rem);font-weight:900;letter-spacing:-0.04em;"></div>
+        <div style="text-align:right;">
+          <div id="today-trend-pill" style="display:inline-flex;align-items:center;gap:4px;font-size:0.72rem;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">
+            <span id="today-trend-arrow"></span>
+            <span id="today-trend-label"></span>
+          </div>
+          <div id="today-fatigue-raw" style="font-size:0.65rem;color:var(--dim);margin-top:4px;text-align:right;">Load: —/100</div>
+        </div>
+      </div>
+      <div id="today-state-desc" style="font-size:0.82rem;color:var(--muted);line-height:1.5;border-top:1px solid rgba(255,255,255,0.07);padding-top:8px;"></div>
+    </div>
+
+    <!-- Week strip (reused) -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;">This week</div>
+    <div id="today-week-strip" style="margin-bottom:14px;">
+      <div class="week-strip-row" id="today-week-row"></div>
+      <div id="today-week-context" style="font-size:0.72rem;color:var(--muted);text-align:center;padding:6px 0 2px;line-height:1.4;"></div>
+    </div>
+
+    <!-- Quick stats row -->
+    <div id="today-stats-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px;">
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.55rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Days in</div>
+        <div id="today-stat-streak" style="font-size:1.2rem;font-weight:900;color:var(--white);">—</div>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.55rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Week net</div>
+        <div id="today-stat-net" style="font-size:1.2rem;font-weight:900;color:#4ADE80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.55rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Shifts</div>
+        <div id="today-stat-shifts" style="font-size:1.2rem;font-weight:900;color:var(--white);">—</div>
+      </div>
+    </div>
+
+    <!-- Primary CTA -->
+    <button class="btn" onclick="showTab('quickcheck')" style="margin-bottom:10px;" id="today-cta-check">Check tonight's shift →</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;">
+      <button onclick="showTab('history')" style="padding:12px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:var(--head);font-size:0.78rem;font-weight:700;cursor:pointer;min-height:46px;">View my week</button>
+      <button onclick="confirmTodayShift()" id="today-cta-confirm" style="padding:12px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.25);border-radius:12px;color:#FCD34D;font-family:var(--head);font-size:0.78rem;font-weight:700;cursor:pointer;min-height:46px;display:none;">Confirm shift ✓</button>
+    </div>
+
+    <!-- Empty state (no history) -->
+    <div id="today-empty" style="display:none;text-align:center;padding:24px 0;">
+      <div style="font-size:2rem;margin-bottom:10px;">📋</div>
+      <div style="font-size:0.88rem;font-weight:700;color:var(--white);margin-bottom:6px;">No shifts logged yet</div>
+      <div style="font-size:0.78rem;color:var(--muted);line-height:1.5;">Run a Quick Check and save it to start building your week picture.</div>
+    </div>
+
+  </div>
+  <div id="tab-quickcheck" class="screen">
+    <div style="height:10px;"></div>
+
+    <!-- ── QC FORM AREA ── -->
+    <div id="qc-form-area">
+
+      <!-- MODE TOGGLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-size:0.82rem;font-weight:800;color:var(--white);">Check a shift</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.68rem;color:var(--dim);" id="qc-mode-label">Live</span>
+          <div id="qc-mode-toggle" onclick="toggleCheckMode()" style="width:40px;height:22px;border-radius:11px;background:var(--card2);border:1px solid var(--border);cursor:pointer;position:relative;transition:background 0.2s;">
+            <div id="qc-mode-knob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--sky);transition:left 0.2s;"></div>
+          </div>
+          <span style="font-size:0.68rem;color:var(--dim);">Scenario</span>
+        </div>
+      </div>
+
+      <!-- ── LIVE MODE PANEL ── -->
+      <div id="qc-live-panel">
+
+        <!-- Auto-context summary card -->
+        <div id="qc-live-context-card" style="background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;">Today's context</div>
+          <div id="qc-live-context-lines" style="display:flex;flex-direction:column;gap:5px;"></div>
+          <button onclick="qcShowScenario()" style="background:none;border:none;color:var(--sky);font-family:var(--head);font-size:0.68rem;font-weight:700;cursor:pointer;padding:8px 0 0;opacity:0.8;">Override any of these →</button>
+        </div>
+
+        <!-- THE TWO INPUTS -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+
+          <!-- Extra hours -->
+          <div class="card" style="padding:14px 12px;">
+            <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Extra offered</div>
+            <div class="stepper" style="justify-content:flex-start;gap:10px;margin-bottom:6px;">
+              <button class="step-btn" onclick="stepExtra(-1)">−</button>
+              <span class="step-val" id="extra-h-val" style="font-size:1.35rem;">0</span>
+              <button class="step-btn" onclick="stepExtra(1)">+</button>
+            </div>
+            <input type="hidden" id="extra-h" value="0">
+            <div class="seg" id="extra-m-seg" style="gap:3px;">
+              <button class="seg-btn active" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg','extra-m',this,0)">:00</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg','extra-m',this,15)">:15</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg','extra-m',this,30)">:30</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg','extra-m',this,45)">:45</button>
+            </div>
+            <input type="hidden" id="extra-m" value="0">
+          </div>
+
+          <!-- Shift type -->
+          <div class="card" style="padding:14px 12px;">
+            <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Shift type</div>
+            <div class="shift-type-grid" style="grid-template-columns:1fr 1fr 1fr;gap:4px;">
+              <div class="shift-type-card light" style="padding:8px 4px;" onclick="selectShiftType(this,'light',0.8)">
+                <div class="shift-type-icon" style="font-size:0.9rem;">🌱</div>
+                <div class="shift-type-name" style="font-size:0.6rem;">Light</div>
+              </div>
+              <div class="shift-type-card standard active" style="padding:8px 4px;" onclick="selectShiftType(this,'standard',1.0)">
+                <div class="shift-type-icon" style="font-size:0.9rem;">⚙️</div>
+                <div class="shift-type-name" style="font-size:0.6rem;">Std</div>
+              </div>
+              <div class="shift-type-card heavy" style="padding:8px 4px;" onclick="selectShiftType(this,'heavy',1.2)">
+                <div class="shift-type-icon" style="font-size:0.9rem;">🔥</div>
+                <div class="shift-type-name" style="font-size:0.6rem;">Heavy</div>
+              </div>
+            </div>
+            <input type="hidden" id="shift-intensity" value="1.0">
+          </div>
+        </div>
+
+        <!-- Strategy strip -->
+        <div style="padding:4px 0 12px;">
+          <div style="font-size:0.63rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">What's on the table?</div>
+          <div class="strategy-grid" id="qc-strategy-grid">
+            <div class="strategy-card protect" onclick="selectStrategy(this,'protect_energy')">
+              <div class="strategy-icon">🛡</div>
+              <div class="strategy-name">Protect energy</div>
+            </div>
+            <div class="strategy-card active" onclick="selectStrategy(this,'balanced')">
+              <div class="strategy-icon">⚖️</div>
+              <div class="strategy-name">Balanced</div>
+            </div>
+            <div class="strategy-card push" onclick="selectStrategy(this,'push_savings')">
+              <div class="strategy-icon">📈</div>
+              <div class="strategy-name">Push for savings</div>
+            </div>
+            <div class="strategy-card urgent" onclick="selectStrategy(this,'urgent_cash')">
+              <div class="strategy-icon">⚡</div>
+              <div class="strategy-name">Urgent cash</div>
+            </div>
+          </div>
+          <input type="hidden" id="qc-strategy" value="balanced">
+        </div>
+
+        <!-- Hidden inputs that the engine needs — auto-populated from context -->
+        <input type="hidden" id="base-h" value="9">
+        <input type="hidden" id="base-m" value="15">
+        <input type="hidden" id="tax-region" value="england">
+        <input type="hidden" id="qc-live-mode" value="1">
+
+      </div><!-- /qc-live-panel -->
+
+      <!-- ── SCENARIO MODE PANEL ── -->
+      <div id="qc-scenario-panel" style="display:none;">
+
+        <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:0.75rem;color:#FCD34D;line-height:1.4;">
+          ⚠ Scenario mode — hypothetical only. Results are not saved to your week.
+        </div>
+
+        <!-- Full manual form (existing) -->
+        <div class="card" style="padding:13px 14px;margin-bottom:10px;">
+          <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;margin-bottom:10px;text-transform:uppercase;">Shift context</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;">
+            <!-- Shift type -->
+            <div>
+              <div style="font-size:0.58rem;color:var(--dim);font-weight:600;letter-spacing:0.08em;margin-bottom:5px;text-transform:uppercase;">Type</div>
+              <div class="shift-type-grid" style="grid-template-columns:1fr 1fr 1fr;gap:4px;">
+                <div class="shift-type-card light" style="padding:7px 4px;" onclick="selectShiftType(this,'light',0.8)">
+                  <div class="shift-type-icon" style="font-size:0.9rem;">🌱</div>
+                  <div class="shift-type-name" style="font-size:0.6rem;">Light</div>
+                </div>
+                <div class="shift-type-card standard active" style="padding:7px 4px;" onclick="selectShiftType(this,'standard',1.0)">
+                  <div class="shift-type-icon" style="font-size:0.9rem;">⚙️</div>
+                  <div class="shift-type-name" style="font-size:0.6rem;">Std</div>
+                </div>
+                <div class="shift-type-card heavy" style="padding:7px 4px;" onclick="selectShiftType(this,'heavy',1.2)">
+                  <div class="shift-type-icon" style="font-size:0.9rem;">🔥</div>
+                  <div class="shift-type-name" style="font-size:0.6rem;">Heavy</div>
+                </div>
+              </div>
+            </div>
+            <!-- Start time -->
+            <div>
+              <div style="font-size:0.58rem;color:var(--dim);font-weight:600;letter-spacing:0.08em;margin-bottom:5px;text-transform:uppercase;">Starts</div>
+              <div class="seg" id="start-hour-seg" style="gap:3px;">
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('start-hour-seg',this);setShiftStart(0)">🌙</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('start-hour-seg',this);setShiftStart(5)">🌅</button>
+                <button class="seg-btn active" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('start-hour-seg',this);setShiftStart(7)">☀️</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('start-hour-seg',this);setShiftStart(20)">🌆</button>
+              </div>
+              <div id="start-label" style="font-size:0.58rem;color:var(--dim);margin-top:4px;text-align:center;">Day (07–19)</div>
+            </div>
+            <!-- Sleep -->
+            <div>
+              <div style="font-size:0.58rem;color:var(--dim);font-weight:600;letter-spacing:0.08em;margin-bottom:5px;text-transform:uppercase;">Rest before</div>
+              <div class="seg" id="sleep-seg" style="gap:3px;">
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('sleep-seg',this);setSleep(4.5);updateSleepLabel('Poor')">😴</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('sleep-seg',this);setSleep(6);updateSleepLabel('Short')">😑</button>
+                <button class="seg-btn active" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('sleep-seg',this);setSleep(7.5);updateSleepLabel('Good')">🙂</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('sleep-seg',this);setSleep(9);updateSleepLabel('Full')">😊</button>
+              </div>
+              <div id="sleep-label" style="font-size:0.58rem;color:var(--dim);margin-top:4px;text-align:center;">Good (7–8h)</div>
+            </div>
+            <!-- Streak -->
+            <div>
+              <div style="font-size:0.58rem;color:var(--dim);font-weight:600;letter-spacing:0.08em;margin-bottom:5px;text-transform:uppercase;">Days before this</div>
+              <div class="seg" id="streak-seg" style="gap:3px;">
+                <button class="seg-btn active" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('streak-seg',this);setStreak(1,1);updateStreakLabel('None')">0</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('streak-seg',this);setStreak(2,1);updateStreakLabel('1 day')">1</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('streak-seg',this);setStreak(4,2);updateStreakLabel('2–3 days')">2–3</button>
+                <button class="seg-btn" style="font-size:0.65rem;padding:7px 2px;" onclick="setSeg('streak-seg',this);setStreak(6,4);updateStreakLabel('4+ days')">4+</button>
+              </div>
+              <div id="streak-label" style="font-size:0.58rem;color:var(--dim);margin-top:4px;text-align:center;">None</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hours (full) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div class="card" style="padding:13px 12px;">
+            <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Standard day</div>
+            <div id="base-day-display" style="font-size:1.35rem;font-weight:900;color:var(--sky);letter-spacing:-0.5px;">9h 15m</div>
+            <button id="base-edit-toggle" onclick="toggleBaseEdit()" style="background:none;border:none;color:var(--dim);font-size:0.65rem;cursor:pointer;padding:3px 0 0;font-family:var(--head);">
+              <span id="base-edit-arrow">▶</span> Override
+            </button>
+            <div id="base-edit-panel" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+              <div class="hm-wrap" style="gap:8px;">
+                <div class="hm-col">
+                  <div class="hm-label">HRS</div>
+                  <div class="stepper">
+                    <button class="step-btn" onclick="stepBaseH(-1)">−</button>
+                    <span class="step-val" id="base-h-val">9</span>
+                    <button class="step-btn" onclick="stepBaseH(1)">+</button>
+                  </div>
+                  <input type="hidden" id="base-h-scen" value="9">
+                </div>
+                <div class="hm-col">
+                  <div class="hm-label">MINS</div>
+                  <div class="seg" id="base-m-seg" style="gap:3px;">
+                    <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('base-m-seg','base-m-scen',this,0)">:00</button>
+                    <button class="seg-btn active" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('base-m-seg','base-m-scen',this,15)">:15</button>
+                    <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('base-m-seg','base-m-scen',this,30)">:30</button>
+                    <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('base-m-seg','base-m-scen',this,45)">:45</button>
+                  </div>
+                  <input type="hidden" id="base-m-scen" value="15">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:13px 12px;">
+            <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Extra offered</div>
+            <div class="stepper" style="justify-content:flex-start;gap:10px;margin-bottom:6px;">
+              <button class="step-btn" onclick="stepExtra(-1)">−</button>
+              <span class="step-val" id="extra-h-val-scen" style="font-size:1.35rem;">3</span>
+              <button class="step-btn" onclick="stepExtra(1)">+</button>
+            </div>
+            <div class="seg" id="extra-m-seg-scen" style="gap:3px;">
+              <button class="seg-btn active" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg-scen','extra-m-scen',this,0)">:00</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg-scen','extra-m-scen',this,15)">:15</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg-scen','extra-m-scen',this,30)">:30</button>
+              <button class="seg-btn" style="font-size:0.72rem;padding:7px 2px;" onclick="setMinSeg('extra-m-seg-scen','extra-m-scen',this,45)">:45</button>
+            </div>
+            <input type="hidden" id="extra-m-scen" value="0">
+          </div>
+        </div>
+
+        <!-- OT banner (scenario) -->
+        <div id="ot-auto-banner" style="display:none;margin-bottom:10px;padding:10px 14px;background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);border-radius:10px;">
+          <div style="font-size:0.62rem;font-weight:800;letter-spacing:1px;color:#FCD34D;margin-bottom:6px;">⚡ OVERTIME INCLUDED</div>
+          <div id="ot-auto-text" style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:0.78rem;line-height:1.8;color:var(--muted);"></div>
+        </div>
+
+        <!-- Split shift (collapsed) -->
+        <div style="margin-bottom:10px;">
+          <button id="split-toggle" onclick="toggleSplitShift()" style="background:none;border:none;color:var(--dim);font-size:0.7rem;cursor:pointer;padding:4px 0;font-family:var(--head);display:flex;align-items:center;gap:5px;width:100%;justify-content:center;">
+            <span id="split-arrow">▶</span> Already worked part of today? (split shift)
+          </button>
+          <div id="split-panel" style="display:none;">
+            <div class="card" style="margin-top:8px;border-color:rgba(255,255,255,0.08);">
+              <div class="card-title" style="font-size:0.82rem;">Hours Already Done Today</div>
+              <div class="hm-wrap">
+                <div class="hm-col">
+                  <div class="hm-label">HOURS</div>
+                  <div class="stepper">
+                    <button class="step-btn" onclick="stepField('done-h',-1,0,18)">−</button>
+                    <span class="step-val" id="done-h-val">0</span>
+                    <button class="step-btn" onclick="stepField('done-h',1,0,18)">+</button>
+                  </div>
+                  <input type="hidden" id="done-h" value="0">
+                </div>
+                <div class="hm-col">
+                  <div class="hm-label">MINUTES</div>
+                  <div class="seg" id="done-m-seg">
+                    <button class="seg-btn active" style="font-size:0.78rem;padding:9px 2px;" onclick="setMinSeg('done-m-seg','done-m',this,0)">:00</button>
+                    <button class="seg-btn" style="font-size:0.78rem;padding:9px 2px;" onclick="setMinSeg('done-m-seg','done-m',this,15)">:15</button>
+                    <button class="seg-btn" style="font-size:0.78rem;padding:9px 2px;" onclick="setMinSeg('done-m-seg','done-m',this,30)">:30</button>
+                    <button class="seg-btn" style="font-size:0.78rem;padding:9px 2px;" onclick="setMinSeg('done-m-seg','done-m',this,45)">:45</button>
+                  </div>
+                  <input type="hidden" id="done-m" value="0">
+                </div>
+                <div class="hm-display" id="done-display">0h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="tax-region" value="england">
+        <input type="hidden" id="qc-live-mode" value="0">
+
+      </div><!-- /qc-scenario-panel -->
+
+    <!-- STREAK / FATIGUE ALERT BANNER -->
+    <div id="qc-streak-alert" style="display:none;background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.3);border-radius:12px;padding:11px 14px;margin-bottom:10px;font-size:0.78rem;color:#FB923C;line-height:1.5;">
+      <span id="qc-streak-alert-text"></span>
+    </div>
+
+    <!-- Week strip (day selector) -->
+    <div id="qc-week-strip" style="margin-bottom:10px;">
+      <div class="week-strip-row" id="qc-week-row"></div>
+      <div id="qc-week-context-line" style="font-size:0.72rem;color:var(--muted);text-align:center;padding:4px 0 2px;"></div>
+    </div>
+
+    <!-- Day selector -->
+    <div id="qc-day-selector" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+      <span class="day-sel-label" style="font-size:0.62rem;font-weight:700;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;">Checking</span>
+      <button id="qc-day-for" onclick="qcCycleDayFor()" style="flex:1;background:none;border:none;color:var(--sky);font-family:var(--head);font-size:0.88rem;font-weight:800;cursor:pointer;padding:0;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">Today · —</button>
+      <span style="font-size:0.65rem;color:var(--dim);flex-shrink:0;" id="qc-day-for-sub"></span>
+    </div>
+
+    <!-- Error box -->
+    <div id="qc-error" class="error-box"></div>
+
+    <!-- CALCULATE BUTTON -->
+    <button class="btn" id="qc-calc-btn" onclick="calculate()">Get the read</button>
+    <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-top:8px;font-size:0.63rem;color:var(--dim);">
+      <span>Planning estimates only</span><span style="opacity:0.35;">·</span><span>Stored on your device</span>
+      <span style="opacity:0.35;">·</span>
+      <button onclick="showInputHelp()" style="background:none;border:none;color:var(--sky);font-family:var(--head);font-size:0.63rem;cursor:pointer;padding:0;opacity:0.8;">What are these for?</button>
+    </div>
+
+    </div><!-- /qc-form-area -->
+
+
+
+    <!-- STALE BANNER — shown when inputs change after result -->
+    <div id="qc-stale-banner">
+      ⚠ Inputs changed — result not yet updated
+    </div>
+
+    <!-- SNAPSHOT BAR — locked input summary for this result -->
+    <div id="qc-snapshot-bar">
+      <div class="snap-row">
+        <div class="snap-chips" id="qc-snap-chips"></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="snap-meta" id="qc-snap-time"></span>
+          <button class="snap-edit" onclick="qcEditInputs()">Edit inputs</button>
+        </div>
+      </div>
+    </div><!-- /qc-snapshot-bar -->
+
+    <div id="qc-output" style="display:none;margin-top:4px;">
+
+      <!-- SAVE STATE BADGE -->
+      <div id="qc-save-state-badge" class="unsaved">○ Unsaved</div>
+
+      <!-- ── VERDICT CARD — dominant, above the fold ── -->
+      <div class="card" id="out-verdict-card" style="border-color:rgba(74,222,128,0.3);padding:20px 18px 16px;margin-bottom:10px;position:relative;overflow:visible;">
+
+        <!-- Top label -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;">
+          <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.8px;color:var(--muted);text-transform:uppercase;flex-shrink:0;">The call</div>
+          <div id="qc-result-day-label" style="font-size:0.62rem;font-weight:700;color:var(--sky);letter-spacing:0.06em;flex-shrink:0;white-space:nowrap;"></div>
+        </div>
+
+        <!-- Verdict label — dominant visual element -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;min-width:0;">
+          <span id="out-verdict-emoji" style="font-size:2rem;line-height:1;flex-shrink:0;"></span>
+          <span id="out-verdict-label" style="font-size:clamp(1.4rem,5.5vw,2rem);font-weight:900;letter-spacing:-0.04em;line-height:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;"></span>
+        </div>
+
+        <!-- One-line interpretation — second most important -->
+        <div id="out-verdict-summary" style="font-size:clamp(0.80rem,2.5vw,0.88rem);font-weight:500;color:rgba(255,255,255,0.8);line-height:1.55;margin-bottom:14px;word-wrap:break-word;overflow-wrap:break-word;min-width:0;max-width:100%;"></div>
+
+        <!-- Divider -->
+        <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px;"></div>
+
+        <!-- 3-metric row — after tax / fatigue / range -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:0;min-width:0;">
+
+          <!-- After-tax return — primary financial signal -->
+          <div style="text-align:center;min-width:0;overflow:hidden;">
+            <div style="font-size:0.52rem;font-weight:700;color:var(--dim);letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">After tax</div>
+            <div id="out-marginal-net" style="font-size:clamp(0.95rem,3.5vw,1.25rem);font-weight:900;color:#4ADE80;white-space:nowrap;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;">—</div>
+            <div style="font-size:0.58rem;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">gross <span id="out-marginal-gross" style="color:var(--muted);font-variant-numeric:tabular-nums;">—</span></div>
+          </div>
+
+          <!-- Added fatigue — strain signal -->
+          <div style="text-align:center;border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);min-width:0;overflow:hidden;">
+            <div style="font-size:0.52rem;font-weight:700;color:var(--dim);letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Fatigue</div>
+            <div id="out-marginal-fatigue" style="font-size:clamp(0.95rem,3.5vw,1.25rem);font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+            <div style="font-size:0.58rem;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;">total <span id="out-score-inline" style="color:var(--muted);font-variant-numeric:tabular-nums;">—</span>/100</div>
+          </div>
+
+          <!-- Efficient range — can be long, needs wrapping -->
+          <div style="text-align:center;min-width:0;overflow:hidden;">
+            <div style="font-size:0.52rem;font-weight:700;color:var(--dim);letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Range</div>
+            <div id="pr-efficient-inline" style="font-size:clamp(0.72rem,2.5vw,0.88rem);font-weight:800;color:#22C55E;white-space:normal;word-break:break-all;line-height:1.2;overflow:hidden;">—</div>
+            <div style="font-size:0.56rem;color:var(--dim);margin-top:2px;white-space:nowrap;">efficient today</div>
+          </div>
+
+            </div>
+
+      <!-- ── INTERPRETATION LINE ── -->
+      <div style="background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:10px;">
+        <div id="out-verdict-reason" style="font-size:clamp(0.78rem,2.5vw,0.85rem);color:rgba(255,255,255,0.7);line-height:1.6;word-wrap:break-word;overflow-wrap:break-word;max-width:100%;"></div>
+        <div id="out-mode-fit" style="margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--dim);display:none;"></div>
+      </div>
+
+      <!-- ── GOAL CHIP ── -->
+      <div id="goal-impact-p1" style="display:none;background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.18);border-radius:12px;padding:12px 14px;margin-bottom:10px;"></div>
+
+      <!-- ── EFFICIENT RANGE BAR — below fold ── -->
+      <div style="background:var(--card2);border:1px solid rgba(34,197,94,0.15);border-radius:12px;padding:12px 14px;margin-bottom:10px;width:100%;box-sizing:border-box;overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;min-width:0;">
+          <div style="font-size:0.58rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Today's efficient range</div>
+          <div id="pr-efficient" style="font-size:0.75rem;font-weight:800;color:#22C55E;white-space:nowrap;flex-shrink:0;">—</div>
+        </div>
+        <div class="range-bar-wrap" style="margin-bottom:4px;max-width:100%;overflow:hidden;">
+          <div class="range-bar-track" id="push-range-track"></div>
+          <div class="range-bar-labels" id="push-range-labels"></div>
+        </div>
+      </div>
+
+      <!-- ── ETP + TOTAL (secondary metrics, below fold) ── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;width:100%;box-sizing:border-box;">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px;min-width:0;overflow:hidden;">
+          <div style="font-size:0.56rem;font-weight:700;color:var(--dim);letter-spacing:0.09em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Effort-to-pay</div>
+          <div id="out-etp-val" style="font-size:1.15rem;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;">—</div>
+          <div id="out-etp-pill" style="margin-top:3px;overflow:hidden;"></div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px;min-width:0;overflow:hidden;">
+          <div style="font-size:0.56rem;font-weight:700;color:var(--dim);letter-spacing:0.09em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Projected total</div>
+          <div id="out-total-h" style="font-size:1.15rem;font-weight:900;color:var(--sky);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+          <div style="font-size:0.62rem;color:var(--dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><span id="pt-base">—</span> + <span id="pt-extra" style="color:var(--sky);">—</span></div>
+        </div>
+      </div>
+
+      <!-- ── PRIMARY CTA: FULL BREAKDOWN ── -->
+      <button onclick="showQCSummary()" style="width:100%;padding:14px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:12px;color:var(--sky);font-family:var(--head);font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;min-height:48px;">
+        Full breakdown →
+      </button>
+
+      <!-- ── RESULT ACTIONS: 3-button row ── -->
+      <div id="qc-result-actions">
+        <button class="qc-action-btn primary-action" id="p1-save-row" onclick="saveShiftFromP1()">Save</button>
+        <button class="qc-action-btn sky-action" onclick="qcEditInputs()">Edit inputs</button>
+        <button class="qc-action-btn" onclick="qcNewCheck()">New check</button>
+      </div><!-- /qc-result-actions -->
+      <div id="p1-saved-confirm" style="display:none;text-align:center;font-size:0.75rem;color:#4ADE80;margin-top:8px;padding:9px;background:rgba(74,222,128,0.06);border-radius:10px;">✓ Saved to Your Week Read</div>
+    </div><!-- /qc-output -->
+  </div><!-- /tab-quickcheck -->
+
+
+  <div id="tab-qcsummary" class="screen">
+
+    <!-- ── BACK HEADER (fixed overlay) ── -->
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 0 12px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-shrink:0;">
+      <button onclick="showQCBack()" style="background:none;border:none;color:var(--sky);font-family:var(--head);font-size:0.82rem;font-weight:700;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;">
+        ← QuickCheck
+      </button>
+      <div style="flex:1;font-size:0.7rem;font-weight:800;color:var(--dim);text-align:right;letter-spacing:0.12em;text-transform:uppercase;">The Review</div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         SECTION 1 — THE CALL (verdict dominant)
+    ════════════════════════════════════ -->
+    <div class="card" id="sum-verdict-echo" style="padding:20px 18px 18px;margin-bottom:12px;border-color:rgba(74,222,128,0.3);position:relative;overflow:hidden;">
+      <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.8px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;">The call</div>
+
+      <!-- Verdict label — maximum weight -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span id="sum-verdict-emoji" style="font-size:1.8rem;line-height:1;flex-shrink:0;"></span>
+        <span id="sum-verdict-label" style="font-size:clamp(1.6rem,6vw,2.2rem);font-weight:900;letter-spacing:-0.04em;line-height:1;"></span>
+      </div>
+
+      <!-- Trade-off line -->
+      <div id="sum-verdict-summary" style="font-size:clamp(0.82rem,2.8vw,0.92rem);font-weight:500;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:16px;"></div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:rgba(255,255,255,0.08);margin-bottom:16px;"></div>
+
+      <!-- After tax + Fatigue as a pair — the two key facts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:0.58rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">After tax</div>
+          <div id="sum-marginal-net" style="font-size:clamp(1.3rem,5vw,1.8rem);font-weight:900;color:#4ADE80;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+          <div style="font-size:0.65rem;color:var(--dim);margin-top:2px;">gross <span id="sum-marginal-gross" style="color:var(--muted);font-variant-numeric:tabular-nums;">—</span></div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,0.08);padding-left:12px;">
+          <div style="font-size:0.58rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Fatigue cost</div>
+          <div id="sum-marginal-fatigue" style="font-size:clamp(1.3rem,5vw,1.8rem);font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+          <div style="font-size:0.65rem;color:var(--dim);margin-top:2px;">total <span id="sum-score-inline" style="color:var(--muted);font-variant-numeric:tabular-nums;">—</span>/100 <span id="sum-band-inline" style="font-weight:700;"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         SECTION 2 — THE MONEY
+    ════════════════════════════════════ -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;padding:2px 2px 8px;">The money</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      <!-- Net (primary) -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;">
+        <div style="font-size:0.58rem;font-weight:700;color:var(--dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px;">Extra net pay</div>
+        <div id="out-marginal-gross-detail" style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;font-variant-numeric:tabular-nums;">gross —</div>
+        <div id="review-marginal-net" style="font-size:1.4rem;font-weight:900;color:#4ADE80;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+        <div id="review-tax-drag" style="font-size:0.65rem;color:var(--dim);margin-top:3px;"></div>
+      </div>
+      <!-- Full day net -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;">
+        <div style="font-size:0.58rem;font-weight:700;color:var(--dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px;">Full day net</div>
+        <div id="out-gross" style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;font-variant-numeric:tabular-nums;">gross —</div>
+        <div class="metric-value" id="out-net" style="font-size:1.4rem;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+        <div id="out-tax" style="font-size:0.65rem;color:var(--dim);margin-top:3px;"></div>
+      </div>
+    </div>
+    <!-- OT breakdown hint -->
+    <div id="out-gross-detail" style="font-size:0.72rem;color:var(--dim);margin-bottom:12px;padding:0 2px;line-height:1.5;"></div>
+
+    <!-- ════════════════════════════════════
+         SECTION 3 — THE COST (fatigue)
+    ════════════════════════════════════ -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;padding:2px 2px 8px;">The cost</div>
+    <div class="band-card" style="margin-bottom:8px;">
+      <div class="band-header">
+        <div>
+          <div class="band-name" id="out-band-name">—</div>
+          <div class="band-meaning" id="out-band-meaning">—</div>
+        </div>
+        <div class="band-score" id="out-score">—<span>/100</span></div>
+      </div>
+      <div class="gradient-bar">
+        <div class="band-marker" id="band-marker" style="left:25%"></div>
+      </div>
+      <div class="band-labels">
+        <span>Green</span><span>Yellow</span><span>Orange</span><span>Red</span><span>Black</span>
+      </div>
+    </div>
+    <!-- Recovery impact -->
+    <div class="recovery-card" id="recovery-impact-card" style="margin-bottom:8px;">
+      <div style="font-size:0.62rem;font-weight:800;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;">Recovery impact</div>
+      <div class="recovery-row">
+        <span class="recovery-label">Tomorrow's capacity</span>
+        <span class="recovery-val" id="rec-tomorrow-state">—</span>
+      </div>
+      <div class="recovery-row">
+        <span class="recovery-label">Capacity reduction</span>
+        <span class="recovery-val" id="rec-capacity-loss">—</span>
+      </div>
+      <div class="recovery-row">
+        <span class="recovery-label">Recovery debt</span>
+        <span class="recovery-val" id="rec-debt-score">—</span>
+      </div>
+      <div class="recovery-row">
+        <span class="recovery-label">Cumulative strain</span>
+        <span class="recovery-val" id="rec-cumulative">—</span>
+      </div>
+    </div>
+    <!-- Fatigue trace -->
+    <div id="fatigue-trace-card" style="margin-bottom:12px;display:none;">
+      <div style="font-size:0.6rem;font-weight:700;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;padding:0 2px;">Why this estimate</div>
+      <div id="fatigue-trace-list" style="display:flex;flex-direction:column;gap:5px;"></div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         SECTION 4 — THE WINDOW (efficient range)
+    ════════════════════════════════════ -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;padding:2px 2px 8px;">Today's window</div>
+    <div class="card" style="border-color:rgba(34,197,94,0.2);margin-bottom:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;width:100%;box-sizing:border-box;">
+        <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:9px 6px;text-align:center;min-width:0;overflow:hidden;">
+          <div style="font-size:0.55rem;color:#22C55E;font-weight:800;letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Efficient</div>
+          <div id="sum-pr-efficient" style="font-size:clamp(0.72rem,2.5vw,0.88rem);font-weight:900;color:#22C55E;white-space:normal;word-break:break-all;line-height:1.2;overflow:hidden;">—</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:9px 6px;text-align:center;min-width:0;overflow:hidden;">
+          <div style="font-size:0.55rem;color:var(--amber);font-weight:800;letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Stretch</div>
+          <div id="pr-stretch" style="font-size:clamp(0.72rem,2.5vw,0.88rem);font-weight:900;color:var(--amber);white-space:normal;word-break:break-all;line-height:1.2;overflow:hidden;">—</div>
+        </div>
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:9px 6px;text-align:center;min-width:0;overflow:hidden;">
+          <div style="font-size:0.55rem;color:var(--red);font-weight:800;letter-spacing:0.06em;margin-bottom:4px;text-transform:uppercase;white-space:nowrap;">Overreach</div>
+          <div id="pr-overreach" style="font-size:clamp(0.72rem,2.5vw,0.88rem);font-weight:900;color:var(--red);white-space:normal;word-break:break-all;line-height:1.2;overflow:hidden;">—</div>
+        </div>
+      </div>
+      <div class="range-bar-wrap" style="margin-bottom:4px;">
+        <div class="range-bar-track" id="sum-push-range-track"></div>
+        <div class="range-bar-labels" id="sum-push-range-labels"></div>
+      </div>
+      <div id="pr-zone-msg" style="margin-top:10px;font-size:0.8rem;color:var(--muted);line-height:1.55;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;"></div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         SECTION 5 — THE WEEK
+    ════════════════════════════════════ -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;padding:2px 2px 8px;">The week</div>
+
+    <!-- Goal impact -->
+    <div id="goal-impact-p2" style="display:none;background:var(--card);border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:14px 16px;margin-bottom:8px;"></div>
+
+    <!-- Your current choice -->
+    <div class="card" id="out-marginal-card" style="border-color:rgba(56,189,248,0.15);margin-bottom:8px;">
+      <div style="font-size:0.62rem;font-weight:800;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;">This shift</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div style="background:var(--card2);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Base day</div>
+          <div id="out-base-h" style="font-size:1.05rem;font-weight:900;color:var(--white);white-space:nowrap;">—</div>
+        </div>
+        <div style="background:var(--card2);border-radius:10px;padding:10px;border:1px solid rgba(56,189,248,0.15);">
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Extra</div>
+          <div id="out-extra-h" style="font-size:1.05rem;font-weight:900;color:var(--sky);white-space:nowrap;">—</div>
+        </div>
+      </div>
+      <div id="out-marginal-verdict" style="font-size:0.8rem;color:var(--muted);line-height:1.55;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;"></div>
+    </div>
+
+    <!-- Effort-to-pay -->
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+        <div class="card-title" style="margin:0;">Effort-to-pay</div>
+        <div id="out-etp-val-detail" style="font-size:1.3rem;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;">—</div>
+      </div>
+      <div id="out-etp-pill-detail" style="margin-bottom:6px;"></div>
+      <div id="out-etp-note" style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;line-height:1.4;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:0.68rem;color:var(--muted);border-top:1px solid var(--border);padding-top:8px;">
+        <span style="color:#4ADE80;font-weight:700;">Above 6.5</span><span>Strong return</span>
+        <span style="color:#FBBF24;font-weight:700;">3.5 – 6.5</span><span>Fair return</span>
+        <span style="color:#EF4444;font-weight:700;">Below 3.5</span><span>Weak return</span>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         SECTION 6 — THE READ (co-pilot synthesis)
+    ════════════════════════════════════ -->
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase;padding:2px 2px 8px;">The read</div>
+
+    <!-- Week pattern -->
+    <div class="copilot" id="weekly-strategy-block" style="margin-bottom:8px;" aria-label="Week pattern">
+      <div class="copilot-label"><div class="copilot-dot"></div>Week pattern read</div>
+      <div class="copilot-msg-wrap">
+        <div class="copilot-msg" id="out-weekly-strategy">—</div>
+        <button class="copilot-expand-btn" onclick="toggleCopilot(this)" style="display:none;">Read more</button>
+      </div>
+    </div>
+
+    <!-- Strategic co-pilot -->
+    <div class="copilot" style="margin-bottom:12px;">
+      <div class="copilot-label"><div class="copilot-dot"></div>Strategic co-pilot</div>
+      <div class="copilot-msg-wrap">
+        <div class="copilot-msg" id="out-copilot">—</div>
+        <button class="copilot-expand-btn" onclick="toggleCopilot(this)" style="display:none;">Read more</button>
+      </div>
+    </div>
+
+    <!-- 7-day outlook -->
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">7-day outlook</div>
+      <div class="mini-chart" id="mini-chart"></div>
+      <div class="alert-banner alert-warn" id="outlook-warn"></div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      Planning estimates only — not a medical, legal, or compliance system. Tax figures use simplified assumptions and may differ from your actual payslip.
+    </div>
+
+    <!-- ── ACTIONS ── -->
+    <button class="btn" onclick="saveShift()" style="margin-top:14px;">Save this shift</button>
+    <button onclick="showQCBack()" style="display:block;width:100%;margin-top:10px;padding:13px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:var(--head);font-size:0.85rem;font-weight:700;cursor:pointer;min-height:46px;">← Back to QuickCheck</button>
+    <div style="height:12px;"></div>
+  </div>
+  <div id="tab-forecast" class="screen">
+    <div class="forecast-header">
+      <div class="forecast-title">Forecast</div>
+      <div class="forecast-sub">Model a pattern. See what it returns in pay and what it costs in strain.</div>
+    </div>
+    <div class="card" id="fc-verdict-card" style="border-color:rgba(74,222,128,0.3);padding:16px;margin-bottom:0;">
+      <div style="font-size:0.65rem;font-weight:800;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;">FORECAST ASSESSMENT</div>
+      <div id="fc-verdict-label" style="font-size:1.25rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;">—</div>
+      <div id="fc-verdict-summary" style="font-size:0.85rem;font-weight:600;margin-bottom:8px;line-height:1.4;"></div>
+      <div id="fc-verdict-reason" style="font-size:0.78rem;color:var(--muted);line-height:1.55;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;"></div>
+      <div id="fc-verdict-factors" style="font-size:0.72rem;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.6;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Weekly Pattern</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">Tap a day to toggle between Work and Rest.</div>
+      <div class="pattern-grid" id="pattern-grid"></div>
+      <div style="margin-top:10px;">
+        <div class="hm-label" style="margin-bottom:6px;">SHIFT TYPE FOR WORK DAYS</div>
+        <div class="seg" id="fc-type-seg">
+          <button class="seg-btn" onclick="setSeg('fc-type-seg',this);fcShiftI=0.8;runForecast()">Light</button>
+          <button class="seg-btn active" onclick="setSeg('fc-type-seg',this);fcShiftI=1.0;runForecast()">Standard</button>
+          <button class="seg-btn" onclick="setSeg('fc-type-seg',this);fcShiftI=1.2;runForecast()">Heavy</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="hm-label" style="margin-bottom:6px;">HOURS PER WORK DAY</div>
+        <div class="stepper">
+          <button class="step-btn" onclick="stepFcHours(-0.25)">−</button>
+          <span class="step-val" id="fc-hours-val" style="min-width:48px;">8h</span>
+          <button class="step-btn" onclick="stepFcHours(0.25)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="stat-row" id="fc-stats">
+      <div class="stat-box"><div class="stat-val" id="fc-peak">—</div><div class="stat-lbl">Peak Fatigue</div></div>
+      <div class="stat-box"><div class="stat-val" id="fc-income">—</div><div class="stat-lbl">Est. Net</div></div>
+      <div class="stat-box"><div class="stat-val" id="fc-days">—</div><div class="stat-lbl">Work Days</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fatigue Trajectory — 28 Days</div>
+      <div class="forecast-bar-chart" id="fc-chart"></div>
+      <div class="band-labels"><span>Day 1</span><span>Day 7</span><span>Day 14</span><span>Day 21</span><span>Day 28</span></div>
+    </div>
+    <div class="alert-banner alert-danger" id="fc-alert-danger"></div>
+    <div class="alert-banner alert-warn" id="fc-alert-wtr"></div>
+    <div class="optimiser-result" id="optimiser-result">
+      <div class="opt-title">🎯 REST DAY OPTIMISER</div>
+      <div class="opt-body" id="optimiser-msg">—</div>
+    </div>
+    <div style="height:8px;"></div>
+    <button class="btn sm" onclick="runOptimiser()">Optimise Rest Days</button>
+  </div>
+  <div id="tab-goals" class="screen">
+    <div class="forecast-header">
+      <div class="forecast-title">Goals</div>
+      <div class="forecast-sub">Set your target. Every verdict tracks how far each shift takes you.</div>
+    </div>
+
+    <!-- Role clarifier — distinct from QuickCheck mode -->
+    <div style="padding:10px 14px 10px;background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.12);border-radius:12px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;">
+      <div style="font-size:1rem;margin-top:1px;">🎯</div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--white);margin-bottom:3px;">Deeper setup layer</div>
+        <div style="font-size:0.73rem;color:var(--muted);line-height:1.5;">Your target and trade-off preference. The mode selector in QuickCheck is a quick weekly lens — this is where the actual goal lives.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What are you optimising for?</div>
+      <div class="goal-type-grid" style="margin-bottom:16px;">
+        <div class="goal-type-card active" onclick="selectGoalType(this,'income')" id="gt-income">
+          <div class="goal-type-icon">💷</div>
+          <div class="goal-type-name">Weekly Income</div>
+          <div class="goal-type-desc">Aim for a net pay target each week</div>
+        </div>
+        <div class="goal-type-card" onclick="selectGoalType(this,'monthly')" id="gt-monthly">
+          <div class="goal-type-icon">📅</div>
+          <div class="goal-type-name">Monthly Saving</div>
+          <div class="goal-type-desc">Set a monthly saving target</div>
+        </div>
+        <div class="goal-type-card" onclick="selectGoalType(this,'fatigue')" id="gt-fatigue">
+          <div class="goal-type-icon">🌡</div>
+          <div class="goal-type-name">Fatigue Ceiling</div>
+          <div class="goal-type-desc">Keep fatigue below a chosen band</div>
+        </div>
+        <div class="goal-type-card" onclick="selectGoalType(this,'balance')" id="gt-balance">
+          <div class="goal-type-icon">⚖️</div>
+          <div class="goal-type-name">Best Balance</div>
+          <div class="goal-type-desc">Prioritise shifts with best effort-to-pay</div>
+        </div>
+      </div>
+      <input type="hidden" id="goal-type" value="income">
+    </div>
+    <div class="card" id="goal-target-card">
+      <div class="card-title">Your Target</div>
+      <div id="goal-income-field">
+        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:8px;">Weekly net pay target</label>
+        <div class="rate-input-wrap">
+          <span class="rate-prefix">£</span>
+          <input class="rate-input" type="number" id="goal-amount" value="500" min="0" step="10" style="font-size:1.5rem;" oninput="updateGoalProgress()">
+        </div>
+      </div>
+      <div id="goal-fatigue-field" style="display:none;">
+        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:8px;">Keep fatigue below this band</label>
+        <div class="seg" id="fatigue-ceiling-seg">
+          <button class="seg-btn active" onclick="setSeg('fatigue-ceiling-seg',this);document.getElementById('fatigue-ceiling').value=45">Amber</button>
+          <button class="seg-btn" onclick="setSeg('fatigue-ceiling-seg',this);document.getElementById('fatigue-ceiling').value=65">Orange</button>
+          <button class="seg-btn" onclick="setSeg('fatigue-ceiling-seg',this);document.getElementById('fatigue-ceiling').value=75">Red</button>
+        </div>
+        <input type="hidden" id="fatigue-ceiling" value="45">
+      </div>
+    </div>
+    <div class="card" id="goal-progress-card">
+      <div class="card-title">This Week</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px;">
+        <div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:2px;">Progress</div>
+          <div style="font-size:1.5rem;font-weight:800;" id="goal-current-val">£0</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:2px;">Target</div>
+          <div style="font-size:1.5rem;font-weight:800;color:var(--sky);" id="goal-target-display">£500</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="goal-progress-fill" style="width:0%"></div>
+      </div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:6px;" id="goal-progress-label">Save shifts to track progress</div>
+    </div>
+    <div class="gap-card" id="goal-gap-card" style="display:none;">
+      <div class="gap-title">PROGRESS TOWARDS GOAL</div>
+      <div class="gap-body" id="goal-gap-msg">—</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recommended Next Step</div>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;" id="goal-recommendation">
+        Save at least one shift to generate recommendations.
+      </div>
+    </div>
+    <div style="text-align:center;padding:4px 0 10px;">
+      <button onclick="showTab('quickcheck')" style="background:none;border:none;font-family:var(--head);font-size:0.75rem;color:var(--sky);cursor:pointer;padding:0;opacity:0.8;">← Back to QuickCheck</button>
+    </div>
+  </div>
+  <div id="tab-history" class="screen">
+    <div class="forecast-header">
+      <div class="forecast-title">Your Week Read</div>
+      <div class="forecast-sub">Pay earned. Fatigue spent. Whether the pattern is working.</div>
+    </div>
+      <!-- SHARE CARD -->
+      <div class="card" id="week-share-card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
+          <div style="font-size:0.65rem;font-weight:800;letter-spacing:1px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">YOUR WEEK READ</div>
+          <button id="share-copy-btn" onclick="copyWeekRead()" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:8px;color:var(--sky);font-family:var(--head);font-size:0.7rem;font-weight:700;cursor:pointer;padding:5px 10px;flex-shrink:0;white-space:nowrap;">Copy</button>
+        </div>
+        <div id="share-card-text" style="font-size:0.82rem;line-height:1.7;font-family:var(--mono);white-space:pre-line;color:var(--muted);">Save shifts in QuickCheck to generate your week read.</div>
+        <div style="margin-top:10px;font-size:0.65rem;color:var(--dim);">Private version includes income figures. Toggle below for a public-safe version.</div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:0.75rem;color:var(--muted);cursor:pointer;">
+          <input type="checkbox" id="share-public-mode" onchange="updateShareCard()" style="accent-color:var(--sky);">
+          Public-safe version (no income figures)
+        </label>
+      </div>
+
+    <div id="history-empty" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-text">No shifts logged yet.</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:8px;line-height:1.6;text-align:center;max-width:260px;">
+        Run a QuickCheck and tap <strong>Save this shift</strong>. Each saved shift sharpens the fatigue baseline and builds your weekly picture.
+      </div>
+    </div>
+    <div id="history-stats" style="display:none;">
+      <!-- WEEK READ TOPLINES -->
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val" id="hist-net">£0</div><div class="stat-lbl">Net earned this week</div></div>
+        <div class="stat-box"><div class="stat-val" id="hist-peak-fat">—</div><div class="stat-lbl">Peak fatigue</div></div>
+      </div>
+      <div class="stat-row" style="margin-top:8px;">
+        <div class="stat-box"><div class="stat-val" id="hist-etp-avg">—</div><div class="stat-lbl">Effort-to-pay avg</div></div>
+        <div class="stat-box"><div class="stat-val" id="hist-week-pattern">—</div><div class="stat-lbl">Week pattern</div></div>
+      </div>
+      <!-- HOW THE WEEK PLAYED OUT interpretation block -->
+      <div class="card" id="week-read-interpretation" style="display:none;margin-bottom:10px;">
+        <div style="font-size:0.65rem;font-weight:800;letter-spacing:1px;color:var(--muted);margin-bottom:8px;">HOW THE WEEK PLAYED OUT</div>
+        <div id="week-read-text" style="font-size:0.85rem;color:var(--white);line-height:1.65;"></div>
+      </div>
+      <!-- hidden compat field -->
+      <input type="hidden" id="hist-avg-fat" value="0">
+      <input type="hidden" id="hist-shifts" value="0">
+      <div class="card">
+        <div class="card-title">Fatigue Trend</div>
+        <div class="trend-chart" id="trend-chart"></div>
+        <div style="font-size:0.68rem;color:var(--dim);text-align:center;margin-top:4px;">Most recent →</div>
+      </div>
+      <!-- Goal progress in History — the memory layer connects back to goals -->
+      <div class="card" id="hist-goal-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div class="card-title" style="margin:0;">Goal Progress</div>
+          <button onclick="showTab('goals')" style="background:none;border:none;font-family:var(--head);font-size:0.7rem;color:var(--sky);cursor:pointer;padding:0;opacity:0.8;">Edit Goals →</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px;">
+          <div style="font-size:1.3rem;font-weight:800;" id="hist-goal-current">£0</div>
+          <div style="font-size:0.78rem;color:var(--muted);">of <span id="hist-goal-target" style="color:var(--sky);">—</span></div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="hist-goal-fill" style="width:0%"></div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;" id="hist-goal-label">Save shifts in QuickCheck to track your goal here.</div>
+      </div>
+      <div id="history-insights" style="display:none;margin-bottom:10px;">
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:var(--card2);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:12px;">
+            <div style="font-size:0.65rem;font-weight:800;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">HIGHEST RETURN</div>
+            <div id="hist-best" style="font-size:0.82rem;font-weight:700;color:#4ADE80;">—</div>
+          </div>
+          <div style="flex:1;background:var(--card2);border:1px solid rgba(239,68,68,0.15);border-radius:12px;padding:12px;">
+            <div style="font-size:0.65rem;font-weight:800;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">HIGHEST COST</div>
+            <div id="hist-worst" style="font-size:0.82rem;font-weight:700;color:#F87171;">—</div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div id="history-list"></div>
+      <button class="btn ghost sm" style="margin-top:8px;" onclick="clearHistory()">Clear All History</button>
+      <button class="btn ghost sm" onclick="resetApp()" style="margin-top:8px;border-color:rgba(239,68,68,0.3);color:#FCA5A5;">↺ Reset App & Start Over</button>
+    </div>
+  </div>
+  <div id="tab-settings" class="screen">
+    <div class="forecast-header">
+      <div class="forecast-title">Settings</div>
+      <div class="forecast-sub">Your standing conditions — pay, hours, tax, and privacy.</div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-heading">Profile</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Profession</div><div class="settings-sub">Shapes fatigue weighting</div></div>
+        <select id="s-profession" onchange="saveSettings()" style="background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--white);padding:6px 10px;font-family:var(--head);font-size:0.82rem;outline:none;">
+          <option value="1.00">HGV Driver</option>
+          <option value="1.12">Nurse / Health</option>
+          <option value="1.06">Warehouse</option>
+          <option value="1.15">Construction</option>
+          <option value="0.80">Office / Admin</option>
+          <option value="1.08">Security</option>
+          <option value="0.92">Retail / Hosp.</option>
+          <option value="1.25">Paramedic</option>
+          <option value="1.10">Care Worker</option>
+          <option value="1.28">Firefighter</option>
+          <option value="1.20">Police / PCSO</option>
+          <option value="1.00">Bus Driver</option>
+          <option value="1.00">Train Driver</option>
+          <option value="0.95">Delivery / Post</option>
+          <option value="1.10">Chef / Kitchen</option>
+          <option value="1.12">Midwife</option>
+          <option value="1.15">Factory / Mfg</option>
+          <option value="1.20">Prison Officer</option>
+          <option value="0.85">Teacher</option>
+          <option value="1.18">Farm / Outdoor</option>
+          <option value="1.05">Other</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Basic Hourly Rate</div><div class="settings-sub">Used for pay estimates</div></div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="color:var(--sky);font-weight:700;">£</span>
+          <input type="number" id="s-rate" step="0.50" min="0" style="background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--white);padding:6px 8px;font-family:var(--mono);font-size:0.9rem;width:72px;outline:none;text-align:right;" onchange="saveSettings()">
+        </div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Tax Region</div></div>
+        <div class="seg" style="width:auto;gap:5px;" id="s-region-seg">
+          <button class="seg-btn" style="padding:7px 12px;font-size:0.78rem;" onclick="setSeg('s-region-seg',this);document.getElementById('s-region').value='england';saveSettings()">England/Wales</button>
+          <button class="seg-btn" style="padding:7px 12px;font-size:0.78rem;" onclick="setSeg('s-region-seg',this);document.getElementById('s-region').value='scotland';saveSettings()">Scotland</button>
+        </div>
+        <input type="hidden" id="s-region" value="england">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Contracted Hours/Day</div><div class="settings-sub">Overtime starts after this</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="step-btn" style="width:28px;height:28px;font-size:1rem;" onclick="stepSetting('s-contracted',-0.25,1,24)">−</button>
+          <span id="s-contracted-val" style="font-family:var(--mono);font-size:0.9rem;min-width:36px;text-align:center;">7.5h</span>
+          <button class="step-btn" style="width:28px;height:28px;font-size:1rem;" onclick="stepSetting('s-contracted',0.25,1,24)">+</button>
+          <input type="hidden" id="s-contracted" value="7.5">
+        </div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Shift Start Time</div><div class="settings-sub">Your usual shift start — used in fatigue and live context</div></div>
+        <div class="seg" id="s-start-seg" style="gap:4px;">
+          <button class="seg-btn" style="font-size:0.72rem;padding:7px 8px;" onclick="setSeg('s-start-seg',this);setSettingStartTime(0)">🌙 00:00</button>
+          <button class="seg-btn" style="font-size:0.72rem;padding:7px 8px;" onclick="setSeg('s-start-seg',this);setSettingStartTime(5)">🌅 05:00</button>
+          <button class="seg-btn active" style="font-size:0.72rem;padding:7px 8px;" onclick="setSeg('s-start-seg',this);setSettingStartTime(7)">☀️ 07:00</button>
+          <button class="seg-btn" style="font-size:0.72rem;padding:7px 8px;" onclick="setSeg('s-start-seg',this);setSettingStartTime(20)">🌆 20:00</button>
+        </div>
+        <input type="hidden" id="s-start-time" value="7">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Overtime Rate</div><div class="settings-sub">Employer OT multiplier</div></div>
+        <div class="seg" style="width:auto;gap:5px;" id="s-ot-seg">
+          <button class="seg-btn" style="padding:7px 10px;font-size:0.78rem;" onclick="setSeg('s-ot-seg',this);document.getElementById('s-ot-mult').value='1.25';saveSettings()">1.25x</button>
+          <button class="seg-btn active" style="padding:7px 10px;font-size:0.78rem;" onclick="setSeg('s-ot-seg',this);document.getElementById('s-ot-mult').value='1.5';saveSettings()">1.5x</button>
+          <button class="seg-btn" style="padding:7px 10px;font-size:0.78rem;" onclick="setSeg('s-ot-seg',this);document.getElementById('s-ot-mult').value='1.75';saveSettings()">1.75x</button>
+          <button class="seg-btn" style="padding:7px 10px;font-size:0.78rem;" onclick="setSeg('s-ot-seg',this);document.getElementById('s-ot-mult').value='2.0';saveSettings()">2x</button>
+        </div>
+        <input type="hidden" id="s-ot-mult" value="1.5">
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-heading">Health Data (Coming in Native App)</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Apple Health / Google Fit</div><div class="settings-sub">Auto-populate fatigue from sleep data</div></div>
+        <button class="toggle" id="health-toggle" onclick="showHealthInfo()"></button>
+      </div>
+      <div id="health-info" style="display:none;font-size:0.75rem;color:var(--muted);padding:8px 0;line-height:1.6;">Health data integration requires the ShiftScope native app. Coming in v2.</div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-heading">Reminders</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Sunday planning prompt</div>
+          <div class="settings-sub">One prompt on Sunday evening to model the week ahead</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer;">
+          <input type="checkbox" id="pref-sunday-reminder" onchange="savePrefs()" style="opacity:0;width:0;height:0;position:absolute;">
+          <span id="sunday-toggle" onclick="togglePref('pref-sunday-reminder','sunday-toggle')" style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:11px;transition:.2s;"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Streak warnings</div>
+          <div class="settings-sub">Alert when 4+ consecutive days are tracked</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer;">
+          <input type="checkbox" id="pref-streak-alert" checked onchange="savePrefs()" style="opacity:0;width:0;height:0;position:absolute;">
+          <span id="streak-toggle" onclick="togglePref('pref-streak-alert','streak-toggle')" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#3b82f6;border-radius:11px;transition:.2s;"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Goal progress alerts</div>
+          <div class="settings-sub">Alert when within striking distance of weekly target</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer;">
+          <input type="checkbox" id="pref-goal-alert" checked onchange="savePrefs()" style="opacity:0;width:0;height:0;position:absolute;">
+          <span id="goal-alert-toggle" onclick="togglePref('pref-goal-alert','goal-alert-toggle')" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#3b82f6;border-radius:11px;transition:.2s;"></span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-heading">Data & Privacy</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Data Storage</div></div>
+        <div class="settings-value">Local only</div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Shifts Logged</div></div>
+        <div class="settings-value" id="s-shift-count">0</div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Personal Baseline</div><div class="settings-sub">Active after 10 shifts</div></div>
+        <div class="settings-value" id="s-baseline-status">Building...</div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn ghost sm" onclick="clearHistory();alert('All shift history cleared.')">Clear All Shift Data</button>
+      </div>
+    </div>
+    <div class="disclaimer">
+      ShiftScope is a decision-support tool only. Not a medical device, occupational health assessment, or legal compliance instrument. Tax estimates based on simplified UK 2024/25 HMRC thresholds. Always seek professional advice for health, employment, and tax decisions. © 2026 ShiftScope — shiftscope.co.uk
+    </div>
+  </div>
+
+
+    </div><!-- /screen-wrap -->
+
+    <!-- NAV -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('today')" id="nav-today"><span class="tab-icon">🏠</span>Today</button>
+    <button class="nav-tab" onclick="showTab('quickcheck')" id="nav-quickcheck"><span class="tab-icon">⚡</span>Check</button>
+    <button class="nav-tab" onclick="showTab('goals')" id="nav-goals"><span class="tab-icon">🎯</span>Goals</button>
+    <button class="nav-tab" onclick="showTab('history')" id="nav-history"><span class="tab-icon">📋</span>Week</button>
+    <button class="nav-tab" onclick="showTab('settings')" id="nav-settings"><span class="tab-icon">⚙️</span>Settings</button>
+  </div>
+
+</div><!-- /main-app -->
+
+<!-- EOD + HELP OVERLAYS -->
+<div id="eod-backdrop" onclick="closeEodSheet()"></div>
+<div id="eod-confirm-sheet">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="font-size:1rem;font-weight:800;color:var(--white);">Confirm today's shift</div>
+    <button onclick="closeEodSheet()" style="background:none;border:none;color:var(--dim);font-size:1.2rem;cursor:pointer;padding:0;min-width:32px;min-height:32px;">✕</button>
+  </div>
+  <div style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;line-height:1.5;" id="eod-intro">Update with what actually happened. This replaces the planned estimate in your week.</div>
+
+  <!-- Actual hours worked -->
+  <div class="eod-row">
+    <span class="eod-label">Total hours worked</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="stepper" style="gap:8px;">
+        <button class="step-btn" onclick="stepEod('eod-total-h',-0.25,0,18)">−</button>
+        <span class="step-val" id="eod-total-h-val" style="min-width:44px;">—</span>
+        <button class="step-btn" onclick="stepEod('eod-total-h',0.25,0,18)">+</button>
+      </div>
+      <input type="hidden" id="eod-total-h" value="0">
+    </div>
+  </div>
+
+  <!-- Shift type -->
+  <div class="eod-row">
+    <span class="eod-label">Shift intensity</span>
+    <div class="shift-type-grid" style="grid-template-columns:1fr 1fr 1fr;gap:4px;width:160px;">
+      <div class="shift-type-card light" style="padding:6px 4px;" onclick="selectEodType(this,0.8)">
+        <div class="shift-type-icon" style="font-size:0.85rem;">🌱</div>
+        <div class="shift-type-name" style="font-size:0.58rem;">Light</div>
+      </div>
+      <div class="shift-type-card standard active" style="padding:6px 4px;" onclick="selectEodType(this,1.0)">
+        <div class="shift-type-icon" style="font-size:0.85rem;">⚙️</div>
+        <div class="shift-type-name" style="font-size:0.58rem;">Std</div>
+      </div>
+      <div class="shift-type-card heavy" style="padding:6px 4px;" onclick="selectEodType(this,1.2)">
+        <div class="shift-type-icon" style="font-size:0.85rem;">🔥</div>
+        <div class="shift-type-name" style="font-size:0.58rem;">Heavy</div>
+      </div>
+    </div>
+    <input type="hidden" id="eod-intensity" value="1.0">
+  </div>
+
+  <!-- Break taken -->
+  <div class="eod-row" style="border-bottom:none;">
+    <span class="eod-label">Break between jobs</span>
+    <div class="seg" id="eod-break-seg" style="gap:4px;">
+      <button class="seg-btn active" style="font-size:0.68rem;padding:7px 6px;" onclick="setSeg('eod-break-seg',this);eodBreak=0;updateEodWtd();">None</button>
+      <button class="seg-btn" style="font-size:0.68rem;padding:7px 6px;" onclick="setSeg('eod-break-seg',this);eodBreak=0.5;updateEodWtd();">30m</button>
+      <button class="seg-btn" style="font-size:0.68rem;padding:7px 6px;" onclick="setSeg('eod-break-seg',this);eodBreak=1;updateEodWtd();">1h</button>
+      <button class="seg-btn" style="font-size:0.68rem;padding:7px 6px;" onclick="setSeg('eod-break-seg',this);eodBreak=2;updateEodWtd();">2h+</button>
+    </div>
+  </div>
+
+  <!-- Confirm button -->
+  <!-- WTD status line — shown when break entered -->
+  <div id="eod-wtd-status" style="display:none;font-size:0.75rem;padding:8px 12px;border-radius:8px;margin-top:12px;line-height:1.4;"></div>
+  <button class="btn" onclick="confirmEodShift()" style="margin-top:10px;" id="eod-confirm-btn">Confirm shift</button>
+  <button onclick="closeEodSheet()" style="display:block;width:100%;margin-top:8px;padding:11px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:var(--head);font-size:0.82rem;font-weight:700;cursor:pointer;">Keep estimate</button>
+</div>
+
+<!-- INPUT HELP -->
+<div id="help-backdrop" onclick="document.getElementById('input-help-sheet').style.display='none';this.style.display='none';" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
+<div id="input-help-sheet" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:min(430px,100vw);background:var(--card);border-radius:20px 20px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));z-index:300;box-sizing:border-box;max-height:75dvh;overflow-y:auto;">
+  <div style="font-size:1rem;font-weight:800;color:var(--white);margin-bottom:14px;">What are these inputs for?</div>
+  <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">
+    <p style="margin-bottom:8px;"><strong style="color:var(--white);">Base shift</strong> — your contracted hours. Overtime starts after this.</p>
+    <p style="margin-bottom:8px;"><strong style="color:var(--white);">Extra offered</strong> — the additional hours being offered today.</p>
+    <p style="margin-bottom:8px;"><strong style="color:var(--white);">Shift type</strong> — affects the fatigue estimate. Heavy costs more per hour.</p>
+    <p><strong style="color:var(--white);">All estimates are planning tools</strong> — not medical or legal readings.</p>
+  </div>
+  <button class="btn" style="margin-top:20px;" onclick="document.getElementById('input-help-sheet').style.display='none';document.getElementById('help-backdrop').style.display='none';">Got it</button>
+</div>
+
+</div><!-- /app -->
+
+
+<script src="shiftscope-fatigue.js"></script>
+<script src="shiftscope-verdict.js"></script>
+<script src="shiftscope-tax.js"></script>
+<script src="shiftscope-ui.js"></script>
+<script src="shiftscope-settings.js"></script>
+</body>
+</html>
